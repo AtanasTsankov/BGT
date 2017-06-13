@@ -8,26 +8,46 @@
 
     <TextView
         android:id="@+id/appName"
-        android:layout_width="174dp"
+        android:layout_width="0dp"
         android:layout_height="55dp"
         android:fontFamily="sans-serif-condensed"
         android:text="TextView"
         android:textAlignment="center"
         android:textSize="24sp"
-        tools:layout_editor_absoluteX="105dp"
-        tools:layout_editor_absoluteY="47dp"
-        tools:text="Board Games Timer" />
+        tools:text="Board Games Timer"
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintRight_creator="1"
+        android:layout_marginStart="92dp"
+        android:layout_marginEnd="92dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="126dp"
+        tools:layout_constraintLeft_creator="1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginLeft="92dp"
+        android:layout_marginRight="92dp"
+        app:layout_constraintHorizontal_bias="1.0" />
 
     <Button
         android:id="@+id/newTmplBtn"
-        android:layout_width="176dp"
+        android:layout_width="0dp"
         android:layout_height="54dp"
         android:background="@android:drawable/alert_dark_frame"
         android:text="Button"
         android:textColor="@android:color/background_light"
-        tools:layout_editor_absoluteX="105dp"
-        tools:layout_editor_absoluteY="143dp"
-        tools:text="New Template" />
+        tools:text="New Template"
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintBottom_creator="1"
+        app:layout_constraintRight_toRightOf="@+id/loadTmplBtn"
+        android:layout_marginTop="53dp"
+        tools:layout_constraintLeft_creator="1"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintLeft_toLeftOf="@+id/loadTmplBtn"
+        app:layout_constraintBottom_toBottomOf="@+id/loadTmplBtn"
+        app:layout_constraintTop_toTopOf="@+id/appName"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/loadTmplBtn"
@@ -36,7 +56,15 @@
         android:background="@android:drawable/alert_dark_frame"
         android:text="Button"
         android:textColor="@android:color/background_light"
-        tools:layout_editor_absoluteX="105dp"
-        tools:layout_editor_absoluteY="236dp"
-        tools:text="Load Template" />
+        tools:text="Load Template"
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_constraintLeft_creator="1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintVertical_bias="0.258" />
 </android.support.constraint.ConstraintLayout>
