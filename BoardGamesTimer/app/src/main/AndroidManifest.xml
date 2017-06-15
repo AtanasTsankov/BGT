@@ -16,7 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TemplateSetup"></activity>
+        <activity android:name=".TemplateSetup" />
+        <activity android:name=".PlayersSetup"></activity>
     </application>
 
 </manifest>
