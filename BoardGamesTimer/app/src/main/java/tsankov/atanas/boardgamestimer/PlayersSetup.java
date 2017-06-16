@@ -22,22 +22,38 @@ public class PlayersSetup extends AppCompatActivity {
         Integer players = (Integer) value.get("P_Count");
 
         RelativeLayout m_vwJokeLayout = (RelativeLayout) this.findViewById(R.id.relLayoutPlayers);
-        RelativeLayout.LayoutParams lparams = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 
 
 
         for (int i = 2; i <= players; i++){
+            RelativeLayout.LayoutParams lparams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             int idLastChild= m_vwJokeLayout.getChildAt(m_vwJokeLayout.getChildCount()-1).getId();
             lparams.addRule(RelativeLayout.BELOW, idLastChild);
             EditText tv= new EditText(this);
             tv.setId(idLastChild+1);
             tv.setLayoutParams(lparams);
-            tv.setHint("Player " + i + " name");
+            tv.setHint("Player " + i + " name...");
             m_vwJokeLayout.addView(tv);
 
 
         }
+
+//        for (i = 1; i <= players; i++){
+//            if(i == 1){
+//                EditText txt = new EditText(this);
+//                txt.setId(i.intValue());
+//                txt.setHint("Player " + i + " name");
+//                m_vwJokeLayout.addView(txt, lparams);
+//            }else{
+//                lparams.addRule(RelativeLayout.BELOW, i-1);
+//                EditText txt = new EditText(this);
+//                txt.setId(i.intValue());
+//                txt.setHint("Player " + i + " name");
+//                m_vwJokeLayout.addView(txt, lparams);
+//            }
+//
+//        }
 
 //        Button btn = new Button(this);
 //        btn.setLayoutParams(lparams);
