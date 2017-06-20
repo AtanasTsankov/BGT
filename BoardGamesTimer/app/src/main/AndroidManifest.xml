@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".TemplateSetup" />
-        <activity android:name=".PlayersSetup"></activity>
+        <activity android:name=".PlayersSetup" />
+        <activity android:name=".TurnsSetup"></activity>
     </application>
 
 </manifest>
