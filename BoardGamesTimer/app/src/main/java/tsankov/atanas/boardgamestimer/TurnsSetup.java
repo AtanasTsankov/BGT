@@ -1,18 +1,26 @@
 package tsankov.atanas.boardgamestimer;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class TurnsSetup extends AppCompatActivity {
 
@@ -24,10 +32,22 @@ public class TurnsSetup extends AppCompatActivity {
         Intent intent = getIntent();
         final HashMap value = (HashMap) intent.getSerializableExtra("DataMap");
         final Integer turns =  (Integer) value.get("T_Count");
+        final HashMap names = (HashMap) intent.getSerializableExtra("NamesMap");
+        final String gameName = (String) intent.getSerializableExtra("Game_Name");
         LinearLayout relLayout = (LinearLayout)findViewById(R.id.linLayout);
 
-        String[] spinnerItems = new String[]{"1 minute", "2 minutes", "3 minutes", "4 minutes", "5 minutes", "6 minutes",
-                "7 minutes", "8 minutes", "9 minutes", "10 minutes"};
+        List<String> spinnerItems = new ArrayList<>();
+        spinnerItems.add("Turn duration ...");
+        spinnerItems.add("1 minute");
+        spinnerItems.add("2 minutes");
+        spinnerItems.add("3 minutes");
+        spinnerItems.add("4 minutes");
+        spinnerItems.add("5 minutes");
+        spinnerItems.add("6 minutes");
+        spinnerItems.add("7 minutes");
+        spinnerItems.add("8 minutes");
+        spinnerItems.add("9 minutes");
+        spinnerItems.add("10 minutes");
 
         Integer i;
         for(i = 1; i <= turns; i++){
@@ -49,16 +69,27 @@ public class TurnsSetup extends AppCompatActivity {
                 turnName.setHint("Turn name");
                 relLayout.addView(turnName);
 
-                Spinner turnDuration = new Spinner(this);
-                turnDuration.setId(i + 2);
-                LinearLayout.LayoutParams lparams2 = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                lparams2.setMargins(30,20,30,0);
-                turnDuration.setLayoutParams(lparams2);
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                        android.R.layout.simple_spinner_item, spinnerItems);
-                turnDuration.setAdapter(adapter);
+                Spinner turnDuration = createSpinner(spinnerItems, i+2);
+                turnDuration.setLayoutParams(lparams);
                 relLayout.addView(turnDuration);
+
+                CheckBox personal = new CheckBox(this);
+                personal.setText("Joint turn");
+                personal.setChecked(false);
+                personal.setLayoutParams(lparams);
+                relLayout.addView(personal);
+                if(turns == 1){
+                    Button btn = new Button(this);
+                    btn.setText("START");
+                    btn.setLayoutParams(lparams);
+                    btn.setOnClickListener(new View.OnClickListener(){
+                        @Override
+                        public void onClick(View v){
+                            engageTimers(turns, value, names, gameName);
+                        }
+                    });
+                    relLayout.addView(btn);
+                }
             }else{
                 LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -77,17 +108,107 @@ public class TurnsSetup extends AppCompatActivity {
                 turnName.setHint("Turn name");
                 relLayout.addView(turnName);
 
-                Spinner turnDuration = new Spinner(this);
-                turnDuration.setId(idLastChild + 3);
-                LinearLayout.LayoutParams lparams2 = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                lparams2.setMargins(30,20,30,0);
-                turnDuration.setLayoutParams(lparams2);
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                        android.R.layout.simple_spinner_item, spinnerItems);
-                turnDuration.setAdapter(adapter);
+                Spinner turnDuration = createSpinner(spinnerItems, idLastChild+3);
+                turnDuration.setLayoutParams(lparams);
                 relLayout.addView(turnDuration);
+
+                CheckBox personal = new CheckBox(this);
+                personal.setText("Joint turn");
+                personal.setChecked(false);
+                personal.setLayoutParams(lparams);
+                relLayout.addView(personal);
+
+                if(i == turns){
+                    Button btn = new Button(this);
+                    btn.setText("START");
+                    btn.setLayoutParams(lparams);
+                    btn.setOnClickListener(new View.OnClickListener(){
+                        @Override
+                        public void onClick(View v){
+                            engageTimers(turns, value, names, gameName);
+                        }
+                    });
+                    relLayout.addView(btn);
+                }
             }
         }
+    }
+
+    protected Spinner createSpinner(List items, int id) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                this, android.R.layout.simple_spinner_item, items) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent){
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if (position == 0){
+                    tv.setTextColor(Color.GRAY);
+                }
+                else{
+                    tv.setTextColor(Color.BLACK);
+                }
+                return view;
+            }
+        };
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Spinner sItems = new Spinner(this);
+        sItems.setId(id);
+        sItems.setAdapter(adapter);
+        sItems.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
+                String selectedItemText = (String) parent.getItemAtPosition(position);
+                if(position > 0){
+                    Toast.makeText(getApplicationContext(), "Selected : " + selectedItemText, Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent){
+
+            }
+        });
+        return sItems;
+    }
+
+    public void engageTimers(int turns, HashMap value, HashMap names, String gameName){
+        HashMap<String,ArrayList<String>> turnsDetails = new HashMap<String,ArrayList<String>>();
+        Integer i;
+        Integer turnNumber = 1;
+        for(i = 1; i <= turns*4;){
+            i++;
+            ArrayList<String> tDtls = new ArrayList<String>();
+            EditText tName = (EditText)findViewById(i.intValue());
+
+            tDtls.add(tName.getText().toString());
+            Spinner tDur = (Spinner)findViewById(i.intValue());
+            i++;
+            Integer poss = tDur.getSelectedItemPosition();
+            tDtls.add(poss.toString());
+            CheckBox isJoint = (CheckBox)findViewById(i.intValue());
+            if(isJoint.isChecked()){
+                tDtls.add("true");
+            }else{
+                tDtls.add("false");
+            }
+            i++;
+            turnsDetails.put(Integer.toString(turnNumber), tDtls);
+            turnNumber++;
+        }
+        Intent intent = new Intent(TurnsSetup.this, EngageTimer.class);
+        intent.putExtra("TurnDetailsMap", turnsDetails);
+        intent.putExtra("T_Count", turns);
+        intent.putExtra("DataMap",value);
+        intent.putExtra("NamesMap", names);
+        intent.putExtra("Game_Name", gameName);
+        TurnsSetup.this.startActivity(intent);
     }
 }

@@ -21,6 +21,7 @@ public class PlayersSetup extends AppCompatActivity {
         Intent intent = getIntent();
         final HashMap value = (HashMap) intent.getSerializableExtra("DataMap");
         final Integer players = (Integer) value.get("P_Count");
+        final String gameName = (String) intent.getSerializableExtra("Game_Name");
 
         RelativeLayout m_vwJokeLayout = (RelativeLayout) this.findViewById(R.id.relLayoutPlayers);
 
@@ -54,14 +55,14 @@ public class PlayersSetup extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                continueSetup(players, value);
+                continueSetup(players, value, gameName);
             }
         });
 
 
     }
 
-    public void continueSetup(Integer players, HashMap dataMap){
+    public void continueSetup(Integer players, HashMap dataMap, String gameName){
         Intent intent = new Intent(PlayersSetup.this, TurnsSetup.class);
         HashMap names = new HashMap();
         Integer i;
@@ -71,6 +72,7 @@ public class PlayersSetup extends AppCompatActivity {
         }
         intent.putExtra("NamesMap", names);
         intent.putExtra("DataMap", dataMap);
+        intent.putExtra("Game_Name", gameName);
 
         PlayersSetup.this.startActivity(intent);
 

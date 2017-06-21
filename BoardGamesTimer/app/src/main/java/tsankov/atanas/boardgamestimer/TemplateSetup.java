@@ -58,6 +58,9 @@ public class TemplateSetup extends AppCompatActivity {
         View radioButton = rGroup.findViewById(radioButtonID);
         int radioIndex = rGroup.indexOfChild(radioButton);
         dataMap.put("T_Time", radioIndex);
+        EditText gameName = (EditText)findViewById(R.id.gameName);
+        String gameNameStr = gameName.getText().toString();
+        intent.putExtra("Game_Name", gameNameStr);
 
         CheckBox timeBank = (CheckBox)findViewById(R.id.timeBank);
         if(timeBank.isChecked()){
@@ -147,14 +150,14 @@ public class TemplateSetup extends AppCompatActivity {
     protected List<String> getPlayersItems(){
         List<String> spinnerItems = new ArrayList<>();
         spinnerItems.add("How many players ...");
-        spinnerItems.add("1(One) player");
-        spinnerItems.add("2(Two) players");
-        spinnerItems.add("3(Three) players");
-        spinnerItems.add("4(Four) players");
-        spinnerItems.add("5(Five) players");
-        spinnerItems.add("6(Six) players");
-        spinnerItems.add("7(Seven) players");
-        spinnerItems.add("8(Eight) players");
+        spinnerItems.add("1 player");
+        spinnerItems.add("2 players");
+        spinnerItems.add("3 players");
+        spinnerItems.add("4 players");
+        spinnerItems.add("5 players");
+        spinnerItems.add("6 players");
+        spinnerItems.add("7 players");
+        spinnerItems.add("8 players");
         return spinnerItems;
     }
 
@@ -162,16 +165,16 @@ public class TemplateSetup extends AppCompatActivity {
 
         List<String> spinnerItems = new ArrayList<>();
         spinnerItems.add("How many turns per round ...");
-        spinnerItems.add("1(One) turn per round");
-        spinnerItems.add("2(Two) turns per round");
-        spinnerItems.add("3(Three) turns per round");
-        spinnerItems.add("4(Four) turns per round");
-        spinnerItems.add("5(Five) turns per round");
-        spinnerItems.add("6(Six) turns per round");
-        spinnerItems.add("7(Seven) turns per round");
-        spinnerItems.add("8(Eight) turns per round");
-        spinnerItems.add("9(Nine) turns per round");
-        spinnerItems.add("10(Ten) turns per round");
+        spinnerItems.add("1 turn per round");
+        spinnerItems.add("2 turns per round");
+        spinnerItems.add("3 turns per round");
+        spinnerItems.add("4 turns per round");
+        spinnerItems.add("5 turns per round");
+        spinnerItems.add("6 turns per round");
+        spinnerItems.add("7 turns per round");
+        spinnerItems.add("8 turns per round");
+        spinnerItems.add("9 turns per round");
+        spinnerItems.add("10 turns per round");
         return spinnerItems;
     }
 

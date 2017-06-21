@@ -18,7 +18,8 @@
         </activity>
         <activity android:name=".TemplateSetup" />
         <activity android:name=".PlayersSetup" />
-        <activity android:name=".TurnsSetup"></activity>
+        <activity android:name=".TurnsSetup" />
+        <activity android:name=".EngageTimer"></activity>
     </application>
 
 </manifest>
