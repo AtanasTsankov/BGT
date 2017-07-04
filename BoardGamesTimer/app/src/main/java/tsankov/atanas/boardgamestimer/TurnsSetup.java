@@ -75,6 +75,7 @@ public class TurnsSetup extends AppCompatActivity {
 
                 CheckBox personal = new CheckBox(this);
                 personal.setText("Joint turn");
+                personal.setId(i+3);
                 personal.setChecked(false);
                 personal.setLayoutParams(lparams);
                 relLayout.addView(personal);
@@ -114,6 +115,7 @@ public class TurnsSetup extends AppCompatActivity {
 
                 CheckBox personal = new CheckBox(this);
                 personal.setText("Joint turn");
+                personal.setId(idLastChild+4);
                 personal.setChecked(false);
                 personal.setLayoutParams(lparams);
                 relLayout.addView(personal);
@@ -183,10 +185,14 @@ public class TurnsSetup extends AppCompatActivity {
         HashMap<String,ArrayList<String>> turnsDetails = new HashMap<String,ArrayList<String>>();
         Integer i;
         Integer turnNumber = 1;
-        for(i = 1; i <= turns*4;){
+        for(i = 1; i < turns*4;){
             i++;
+            if(i>2){
+                i++;
+            }
             ArrayList<String> tDtls = new ArrayList<String>();
             EditText tName = (EditText)findViewById(i.intValue());
+            i++;
 
             tDtls.add(tName.getText().toString());
             Spinner tDur = (Spinner)findViewById(i.intValue());
@@ -199,7 +205,6 @@ public class TurnsSetup extends AppCompatActivity {
             }else{
                 tDtls.add("false");
             }
-            i++;
             turnsDetails.put(Integer.toString(turnNumber), tDtls);
             turnNumber++;
         }
