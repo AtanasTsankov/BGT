@@ -45,17 +45,18 @@ public class EngageTimer extends AppCompatActivity {
 
         TextView gameNameView = (TextView) findViewById(R.id.GameNameTextField);
         gameNameView.setText(gameName);
-        if(roundsCount != null && roundsCount > 0){
-//            limitedRoundsGame();
-        }else{
-            unlimitedRoundsGame(1,1);
-        }
         Integer timeBankDurationSeconds = ((Integer) value.get("TB_Amount"))*60;
         HashMap<String,Integer> personalTimeBank = new HashMap();
         for (Integer i = 1; i <= playersCount; i++){
             personalTimeBank.put("Player"+i.toString(), timeBankDurationSeconds);
         }
         this.timeBank = personalTimeBank;
+        if(roundsCount != null && roundsCount > 0){
+//            limitedRoundsGame();
+        }else{
+            unlimitedRoundsGame(1,1);
+        }
+
 
     }
 
@@ -70,7 +71,7 @@ public class EngageTimer extends AppCompatActivity {
         Integer playerTimeBankRemaining = 0;
         this.currentPlayer = currentPlayer;
         this.currentTurn = currentTurn;
-        ArrayList currentTurnDetails = (ArrayList) turnDtls.get(currentTurn);
+        ArrayList currentTurnDetails = (ArrayList) turnDtls.get(String.valueOf(currentTurn));
         String isJointTurn = (String) currentTurnDetails.get(2);
         final TextView reserveTime = (TextView) findViewById(R.id.ReserveTimeTextField);
         if(isJointTurn.equals("false")) {
@@ -81,12 +82,12 @@ public class EngageTimer extends AppCompatActivity {
 
             playerTimeBankRemaining = (Integer) timeBank.get("Player"+currentPlayer);
 
-            reserveTime.setText(playerTimeBankRemaining + " sec.");
+            reserveTime.setText("RESERVE TIME: " + playerTimeBankRemaining + " SECONDS");
         }else{
             TextView plName = (TextView) findViewById(R.id.PlayerNameTextField);
             plName.setText("JOINT TURN");
             isJoint = true;
-            reserveTime.setText("JOINT TURN");
+            reserveTime.setText("RESERVE TIME: " + playerTimeBankRemaining + " SECONDS");
         }
 
         this.currPlayerTB = playerTimeBankRemaining;
@@ -142,6 +143,7 @@ public class EngageTimer extends AppCompatActivity {
                     timer.cancel();
                     b.setText("START");
                 }else{
+                    b.setText("PAUSE");
                     timer = new CountDownTimer(currTimerMS, 1000) {
                         @Override
                         public void onTick(long millisUntilFinished) {
