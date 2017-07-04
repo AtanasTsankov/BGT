@@ -1,6 +1,7 @@
 package tsankov.atanas.boardgamestimer;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,10 @@ public class EngageTimer extends AppCompatActivity {
     private static Integer currPlayerTB;
     private static Long currTimerMS;
     private static CountDownTimer timer;
+    private static CountDownTimer tbTimer;
+    private static TextView reserveTime;
+    private static Boolean isInReserveTime;
+    private static Long currTBTimerMS;
 
     private Integer currentPlayer;
     private Integer currentTurn;
@@ -61,6 +66,7 @@ public class EngageTimer extends AppCompatActivity {
     }
 
     public void unlimitedRoundsGame(Integer currentTurn, Integer currentPlayer){
+        isInReserveTime = false;
         if(currentTurn > turns){
             currentTurn = 1;
         }
@@ -73,7 +79,7 @@ public class EngageTimer extends AppCompatActivity {
         this.currentTurn = currentTurn;
         ArrayList currentTurnDetails = (ArrayList) turnDtls.get(String.valueOf(currentTurn));
         String isJointTurn = (String) currentTurnDetails.get(2);
-        final TextView reserveTime = (TextView) findViewById(R.id.ReserveTimeTextField);
+        reserveTime = (TextView) findViewById(R.id.ReserveTimeTextField);
         if(isJointTurn.equals("false")) {
 
             String playerName = (String) names.get("Player" + currentPlayer);
@@ -89,6 +95,7 @@ public class EngageTimer extends AppCompatActivity {
             isJoint = true;
             reserveTime.setText("RESERVE TIME: " + playerTimeBankRemaining + " SECONDS");
         }
+        reserveTime.setBackgroundColor(Color.LTGRAY);
 
         this.currPlayerTB = playerTimeBankRemaining;
 
@@ -112,74 +119,108 @@ public class EngageTimer extends AppCompatActivity {
             @Override
             public void onFinish() {
                 if(currPlayerTB > 0){
-                    CountDownTimer tbTimer = new CountDownTimer(currPlayerTB*1000 , 1000) {
-                        @Override
-                        public void onTick(long millisUntilFinished) {
-                            reserveTime.setText(millisUntilFinished/1000 + " sec.");
-                        }
-
-                        @Override
-                        public void onFinish() {
-                            reserveTime.setText("TIME IS UP !!!");
-                            //// TODO: 04-Jul-17 play sound warning 
-
-                        }
-                    };
+                    startTBTimer();
+                    timerTextView.setText("RESERVE TIME");
+                    timerTextView.setBackgroundColor(Color.RED);
                 }else{
                     timerTextView.setText("TIME IS UP !!!");
+                    timerTextView.setBackgroundColor(Color.RED);
                     //// TODO: 04-Jul-17 play sound warning
                 }
             }
-        };
+        }.start();
+        timerTextView.setBackgroundColor(Color.GREEN);
 
-        timer.start();
         Button b = (Button)findViewById(R.id.StartStopBtn);
         b.setText("PAUSE");
         b.setOnClickListener(new View.OnClickListener (){
             @Override
-            public void onClick(View v){
-                Button b = (Button) v;
-                if(b.getText().equals("PAUSE")){
-                    timer.cancel();
-                    b.setText("START");
-                }else{
-                    b.setText("PAUSE");
-                    timer = new CountDownTimer(currTimerMS, 1000) {
-                        @Override
-                        public void onTick(long millisUntilFinished) {
-                            timerTextView.setText(millisUntilFinished / 1000 + " sec.");
-                            currTimerMS = millisUntilFinished;
+            public void onClick(View v) {
+                if (!isInReserveTime) {
+                    Button b = (Button) v;
+                    if (b.getText().equals("PAUSE")) {
+                        timer.cancel();
+                        b.setText("START");
+                        timerTextView.setBackgroundColor(Color.YELLOW);
+                    } else {
+                        b.setText("PAUSE");
+                        timerTextView.setBackgroundColor(Color.GREEN);
+                        timer = new CountDownTimer(currTimerMS, 1000) {
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                                timerTextView.setText(millisUntilFinished / 1000 + " sec.");
+                                currTimerMS = millisUntilFinished;
 
-                        }
-                        @Override
-                        public void onFinish() {
-                            if(currPlayerTB > 0){
-                                CountDownTimer tbTimer = new CountDownTimer(currPlayerTB*1000 , 1000) {
-                                    @Override
-                                    public void onTick(long millisUntilFinished) {
-                                        reserveTime.setText(millisUntilFinished/1000 + " sec.");
-                                    }
-
-                                    @Override
-                                    public void onFinish() {
-                                        reserveTime.setText("TIME IS UP !!!");
-                                        //// TODO: 04-Jul-17 play sound warning
-
-                                    }
-                                };
-                            }else{
-                                timerTextView.setText("TIME IS UP !!!");
-                                //// TODO: 04-Jul-17 play sound warning
                             }
 
-                        }
-                    };
-                    timer.start();
+                            @Override
+                            public void onFinish() {
+                                if (currPlayerTB > 0) {
+                                    startTBTimer();
+                                    timerTextView.setText("RESERVE TIME");
+                                    timerTextView.setBackgroundColor(Color.RED);
+                                } else {
+                                    timerTextView.setText("TIME IS UP !!!");
+                                    timerTextView.setBackgroundColor(Color.RED);
+                                    //// TODO: 04-Jul-17 play sound warning
+                                }
+
+                            }
+                        }.start();
+                    }
+                }else{
+                    Button b = (Button) v;
+                    if (b.getText().equals("PAUSE")) {
+                        tbTimer.cancel();
+                        b.setText("START");
+                        reserveTime.setBackgroundColor(Color.YELLOW);
+                    } else {
+                        b.setText("PAUSE");
+                        reserveTime.setBackgroundColor(Color.GREEN);
+                        tbTimer = new CountDownTimer(currTBTimerMS, 1000) {
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                                reserveTime.setText(millisUntilFinished / 1000 + " sec.");
+                                currTBTimerMS = millisUntilFinished;
+
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                currPlayerTB = 0;
+                                reserveTime.setText("TIME IS UP !!!");
+                                reserveTime.setBackgroundColor(Color.RED);
+                                //// TODO: 04-Jul-17 play sound warning
+
+                            }
+                        }.start();
+                    }
                 }
             }
 
-
         });
+
+    }
+
+    private void startTBTimer(){
+        isInReserveTime = true;
+        reserveTime.setBackgroundColor(Color.GREEN);
+        tbTimer = new CountDownTimer(currPlayerTB*1000 , 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                reserveTime.setText(millisUntilFinished/1000 + " sec.");
+                currTBTimerMS = millisUntilFinished;
+                currPlayerTB = (int) millisUntilFinished/1000;
+            }
+
+            @Override
+            public void onFinish() {
+                reserveTime.setText("TIME IS UP !!!");
+                //// TODO: 04-Jul-17 play sound warning
+
+            }
+        }.start();
+        reserveTime.setBackgroundColor(Color.GREEN);
 
     }
 
