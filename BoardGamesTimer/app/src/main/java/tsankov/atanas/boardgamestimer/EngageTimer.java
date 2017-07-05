@@ -6,6 +6,7 @@ import android.os.CountDownTimer;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -32,13 +33,15 @@ public class EngageTimer extends AppCompatActivity {
     private static TextView reserveTime;
     private static Boolean isInReserveTime;
     private static Long currTBTimerMS;
+    private static Boolean isJoint = false;
 
-    private Integer currentPlayer;
-    private Integer currentTurn;
+    private static Integer currentPlayer = 0;
+    private static Integer currentTurn = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_engage_timer);
+
         Intent intent = getIntent();
         this.turnDtls = (HashMap) intent.getSerializableExtra("TurnDetailsMap");
         this.value = (HashMap) intent.getSerializableExtra("DataMap");
@@ -50,6 +53,7 @@ public class EngageTimer extends AppCompatActivity {
 
         TextView gameNameView = (TextView) findViewById(R.id.GameNameTextField);
         gameNameView.setText(gameName);
+        gameNameView.setGravity(Gravity.CENTER);
         Integer timeBankDurationSeconds = ((Integer) value.get("TB_Amount"))*60;
         HashMap<String,Integer> personalTimeBank = new HashMap();
         for (Integer i = 1; i <= playersCount; i++){
@@ -59,32 +63,44 @@ public class EngageTimer extends AppCompatActivity {
         if(roundsCount != null && roundsCount > 0){
 //            limitedRoundsGame();
         }else{
-            unlimitedRoundsGame(1,1);
+            unlimitedRoundsGame();
         }
 
 
     }
 
-    public void unlimitedRoundsGame(Integer currentTurn, Integer currentPlayer){
-        isInReserveTime = false;
-        if(currentTurn > turns){
-            currentTurn = 1;
-        }
-        if(currentPlayer > playersCount){
+    public void unlimitedRoundsGame(){
+        if(isJoint){
             currentPlayer = 1;
+            currentTurn++;
+            isJoint = false;
+        }else {
+            currentPlayer++;
+            isInReserveTime = false;
+            if (currentPlayer > playersCount) {
+                currentPlayer = 1;
+                currentTurn++;
+            }
+            if (currentTurn > turns) {
+                currentTurn = 1;
+            }
         }
-        Boolean isJoint = false;
+        if(currentTurn > turns){
+            currentTurn =1 ;
+        }
+
+//        Boolean isJoint = false;
         Integer playerTimeBankRemaining = 0;
-        this.currentPlayer = currentPlayer;
-        this.currentTurn = currentTurn;
         ArrayList currentTurnDetails = (ArrayList) turnDtls.get(String.valueOf(currentTurn));
-        String isJointTurn = (String) currentTurnDetails.get(2);
+        final String isJointTurn = (String) currentTurnDetails.get(2);
         reserveTime = (TextView) findViewById(R.id.ReserveTimeTextField);
+        reserveTime.setGravity(Gravity.CENTER);
         if(isJointTurn.equals("false")) {
 
             String playerName = (String) names.get("Player" + currentPlayer);
             TextView plName = (TextView) findViewById(R.id.PlayerNameTextField);
             plName.setText(playerName);
+            plName.setGravity(Gravity.CENTER);
 
             playerTimeBankRemaining = (Integer) timeBank.get("Player"+currentPlayer);
 
@@ -92,6 +108,7 @@ public class EngageTimer extends AppCompatActivity {
         }else{
             TextView plName = (TextView) findViewById(R.id.PlayerNameTextField);
             plName.setText("JOINT TURN");
+            plName.setGravity(Gravity.CENTER);
             isJoint = true;
             reserveTime.setText("RESERVE TIME: " + playerTimeBankRemaining + " SECONDS");
         }
@@ -102,12 +119,14 @@ public class EngageTimer extends AppCompatActivity {
         String turnName = (String) currentTurnDetails.get(0);
         TextView turnNameTextView = (TextView) findViewById(R.id.TurnNameTextField);
         turnNameTextView.setText(turnName);
+        turnNameTextView.setGravity(Gravity.CENTER);
 
         String turnDurationMinutes = (String) currentTurnDetails.get(1);
         Integer turnDurationSeconds = Integer.parseInt(turnDurationMinutes) * 60;
         final Integer turnDurationMiliSecs = turnDurationSeconds * 1000;
         final TextView timerTextView = (TextView) findViewById(R.id.turnTimerTextView);
         timerTextView.setText(turnDurationSeconds + " sec.");
+
 
         timer = new CountDownTimer(turnDurationMiliSecs, 1000) {
             @Override
@@ -130,6 +149,22 @@ public class EngageTimer extends AppCompatActivity {
             }
         }.start();
         timerTextView.setBackgroundColor(Color.GREEN);
+
+        Button next = (Button) findViewById(R.id.NextBtn);
+        next.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if(!isJoint) {
+                    timeBank.put("Player" + currentPlayer, currPlayerTB);
+                }
+                if(isInReserveTime){
+                    tbTimer.cancel();
+                }else{
+                    timer.cancel();
+                }
+                unlimitedRoundsGame();
+            }
+        });
 
         Button b = (Button)findViewById(R.id.StartStopBtn);
         b.setText("PAUSE");
